@@ -197,7 +197,7 @@ async function trackAsync({log, file, forceWait}, fn) {
 }
 trackAsync[dontTrack] = true;
 
-async function migrate({path: dir, projectId, storageBucket, dryrun, app, debug = false, require: req, forceWait = false} = {}) {
+async function migrate({path: dir, projectId, storageBucket, dryrun, app, debug = false, require: req, forceWait = false, forceOutOfOrder = false} = {}) {
 	if (req) {
 		try {
 			require(req);
@@ -315,7 +315,11 @@ async function migrate({path: dir, projectId, storageBucket, dryrun, app, debug 
 
 	let installed_rank;
 	if (latest) {
-		files = files.filter(file => semver.gt(file.version, latest.version));
+		if (forceOutOfOrder) {
+			files = files.filter(file => semver.neq(file.version, latest.version));
+		} else {
+			files = files.filter(file => semver.gt(file.version, latest.version));
+		}
 		installed_rank = latest.installed_rank;
 	} else {
 		installed_rank = -1;

@@ -16,6 +16,7 @@ prog
     .option('--projectId', 'Target firebase project')
     .option('--dryrun', 'Simulates changes')
     .option('--forceWait', 'Forces waiting for migrations that do not strictly manage async calls')
+    .option('--forceOutOfOrder', 'Forces executing migrations that are out-of-order')
     .describe('Migrates schema to the latest version')
     .example('migrate')
     .example('migrate --path=./my-migrations')

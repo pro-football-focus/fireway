@@ -476,3 +476,49 @@ test('TypeScript: handle unhandled async error', wrapper(async ({t, projectId, f
 		});
 	}
 }));
+
+test('Out-of-order migrations', wrapper(async ({t, projectId, firestore, app}) => {
+	await fireway.migrate({
+		projectId,
+		path: __dirname + '/outOfOrderMigration/one',
+		app,
+	});
+
+	await fireway.migrate({
+		projectId,
+		path: __dirname + '/outOfOrderMigration/two',
+		app,
+	});
+
+	snapshotBeforeForceOutOfOrder = await firestore.collection('fireway').get();
+	let dataSnapshotBeforeForceOutOfOrder = await firestore.collection('data').get();
+	t.equal(snapshotBeforeForceOutOfOrder.size, 2);
+	t.equal(dataSnapshotBeforeForceOutOfOrder.size, 2);
+	await assertData(t, firestore, 'data/one', {
+		key: 'value'
+	});
+	await assertData(t, firestore, 'data/three', {
+		key: 'value'
+	});
+
+	await fireway.migrate({
+		projectId,
+		path: __dirname + '/outOfOrderMigration/two',
+		app,
+		forceOutOfOrder: true
+	});
+
+	snapshotAfterForceOutOfOrder = await firestore.collection('fireway').get();
+	let dataSnapshotAfterForceOutOfOrder = await firestore.collection('data').get();
+	t.equal(snapshotAfterForceOutOfOrder.size, 3);
+	t.equal(dataSnapshotAfterForceOutOfOrder.size, 3);
+	await assertData(t, firestore, 'data/one', {
+		key: 'value'
+	});
+	await assertData(t, firestore, 'data/two', {
+		key: 'value'
+	});
+	await assertData(t, firestore, 'data/three', {
+		key: 'value'
+	});
+}));
