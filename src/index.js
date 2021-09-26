@@ -303,10 +303,8 @@ async function migrate({path: dir, projectId, storageBucket, dryrun, app, debug 
 
 	// Get the latest migration
 	const result = await collection
-		.orderBy('installed_rank', 'desc')
-		.limit(1)
-		.get();
-	const [latestDoc] = result.docs;
+		.orderBy('installed_rank', 'desc').get();
+	const latestDoc = result.docs[0];
 	const latest = latestDoc && latestDoc.data();
 
 	if (latest && !latest.success) {
@@ -316,7 +314,8 @@ async function migrate({path: dir, projectId, storageBucket, dryrun, app, debug 
 	let installed_rank;
 	if (latest) {
 		if (forceOutOfOrder) {
-			files = files.filter(file => semver.neq(file.version, latest.version));
+			const versions = result.docs.map(doc => doc.data().version);
+			files = files.filter(file => !versions.includes(file.version));
 		} else {
 			files = files.filter(file => semver.gt(file.version, latest.version));
 		}

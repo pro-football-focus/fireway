@@ -483,7 +483,6 @@ test('Out-of-order migrations', wrapper(async ({t, projectId, firestore, app}) =
 		path: __dirname + '/outOfOrderMigration/one',
 		app,
 	});
-
 	await fireway.migrate({
 		projectId,
 		path: __dirname + '/outOfOrderMigration/two',
@@ -501,6 +500,12 @@ test('Out-of-order migrations', wrapper(async ({t, projectId, firestore, app}) =
 		key: 'value'
 	});
 
+	await fireway.migrate({
+		projectId,
+		path: __dirname + '/outOfOrderMigration/one',
+		app,
+		forceOutOfOrder: true
+	});
 	await fireway.migrate({
 		projectId,
 		path: __dirname + '/outOfOrderMigration/two',
