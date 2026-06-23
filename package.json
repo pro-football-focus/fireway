@@ -34,7 +34,7 @@
     }
   },
   "dependencies": {
-    "@google-cloud/firestore": "^4.2.0",
+    "@google-cloud/firestore": "^4.15.1",
     "callsites": "^3.1.0",
     "firebase-admin": "^9.2.0",
     "md5": "^2.2.1",
