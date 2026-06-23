@@ -38,7 +38,7 @@
     "callsites": "^3.1.0",
     "firebase-admin": "^9.2.0",
     "md5": "^2.2.1",
-    "sade": "^1.6.1",
+    "sade": "^1.8.1",
     "semver": "^6.3.0"
   },
   "devDependencies": {
